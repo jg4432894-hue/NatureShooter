@@ -277,3 +277,103 @@ body {
     font-size: 1.1rem;
     color: #a0a0a0;
 }
+
+/* Responsive adjustments for phones and tablets */
+@media (max-width: 1024px) {
+    body {
+        overflow-y: auto;
+    }
+
+    .cabecalho {
+        min-height: 100vh;
+        padding: 40px 20px;
+    }
+
+    .cabecalho h1 {
+        font-size: 4rem;
+    }
+
+    .cabecalho p {
+        font-size: 1.2rem;
+    }
+
+    .perfil-foto {
+        width: 120px;
+        height: 120px;
+    }
+
+    .instagram-link {
+        padding: 10px;
+    }
+
+    .instagram-logo {
+        width: 18px;
+        height: 18px;
+    }
+
+    .monkey-button-wrapper {
+        flex-wrap: wrap;
+        gap: 18px;
+        margin: 80px auto 0;
+    }
+
+    #add-new-btn,
+    #add-new-btn-2 {
+        margin-left: 0;
+    }
+
+    .monkey-button {
+        width: 320px;
+        height: 320px;
+    }
+
+    .monkey-button img {
+        width: 300px;
+        height: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .cabecalho h1 {
+        font-size: 3rem;
+    }
+
+    .cabecalho p {
+        font-size: 1rem;
+    }
+
+    .perfil-foto {
+        width: 100px;
+        height: 100px;
+    }
+
+    .monkey-button-wrapper {
+        flex-direction: column;
+        gap: 16px;
+        margin-top: 60px;
+    }
+
+    .monkey-button {
+        width: 260px;
+        height: 260px;
+    }
+
+    .monkey-button img {
+        width: 240px;
+        height: 240px;
+    }
+
+    .made-by-label {
+        font-size: 1.6rem;
+    }
+
+    .made-by-name {
+        font-size: 3rem;
+    }
+
+    .obra,
+    .moldura {
+        padding: 20px 10px;
+        width: min(90vw, 1000px);
+    }
+}
