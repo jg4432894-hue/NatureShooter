@@ -464,6 +464,8 @@ body {
 
     .cabecalho {
         height: auto;
+        min-height: 75vh;
+        padding-bottom: 70px;
     }
 
     .cabecalho h1 {
