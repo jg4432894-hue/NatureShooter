@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nature Shooter | Fotografia de Animais</title>
+    <meta name="description" content="Portfólio de fotografia de animais e natureza por Miguel Figueiredo. Explore imagens de macacos, girafas e paisagens naturais." />
+    <meta name="keywords" content="fotografia, animais, natureza, macacos, girafas, portfólio, Miguel Figueiredo" />
+    <meta name="author" content="Miguel Figueiredo" />
+    <meta property="og:title" content="Nature Shooter | Fotografia de Animais" />
+    <meta property="og:description" content="Portfólio de fotografia de animais e natureza por Miguel Figueiredo. Veja imagens de macacos, girafas e mais." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="fotos/IMG_3420.JPG" />
+    <meta property="og:url" content="" />
+    <meta name="theme-color" content="#0d0d0d" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="cabecalho">
+        <h1>Nature Shooter</h1>
+        <p>A beleza da natureza e dos animais através da minha lente.</p>
+        
+        <div class="perfil-container">
+            <img src="fotos/pfp.jpg" alt="Foto de Perfil Nature Shooter" class="perfil-foto">
+            
+            <a href="https://www.instagram.com/nature_shooter1/" target="_blank" class="instagram-link" title="Visitar Instagram">
+                <svg class="instagram-logo" viewBox="0 0 512 512">
+                    <path d="M349.33 69.33a93.62 93.62 0 0 1 93.34 93.34v186.66a93.62 93.62 0 0 1-93.34 93.34H162.67a93.62 93.62 0 0 1-93.34-93.34V162.67a93.62 93.62 0 0 1 93.34-93.34h186.66m0-37.33H162.67C90.8 32 32 90.8 32 162.67v186.66C32 421.2 90.8 480 162.67 480h186.66C421.2 480 480 421.2 480 349.33V162.67C480 90.8 421.2 32 349.33 32z"/>
+                    <path d="M256 138.67A117.33 117.33 0 1 0 373.33 256 117.46 117.46 0 0 0 256 138.67zm0 197.33A80 80 0 1 1 336 256a80.09 80.09 0 0 1-80 80z"/>
+                    <circle cx="390.47" cy="121.53" r="27.02"/>
+                </svg>
+            </a>
+        </div>
+
+        <p class="instrucao" id="texto-instrucao">Pressione Enter para ver mais</p>
+    </header>
+
+    <main class="galeria" id="meu-album">
+        <section class="obra made-by">
+            <div class="made-by-texto">
+                <p class="made-by-label">Made by</p>
+                <h2 class="made-by-name">Miguel Figueiredo</h2>
+            </div>
+        </section>
+
+        <section class="obra monkey-slide" id="monkey-slide">
+            <div class="monkey-card">
+                <div class="monkey-button-wrapper">
+                    <button id="add-monkey-btn" class="monkey-button" type="button" aria-label="Adicionar fotos de macacos">
+                        <img src="fotos/IMG_3420.JPG" alt="Macaco" />
+                    </button>
+                    <button id="add-new-btn" class="monkey-button" type="button" aria-label="Adicionar fotos adicionais">
+                        <img src="fotos/IMG_3447.JPG" alt="Girafa" />
+                    </button>
+                    <button id="add-new-btn-2" class="monkey-button" type="button" aria-label="Adicionar foto recém adicionada">
+                        <img src="fotos/IMG_3460.JPG" alt="Imagem nova" />
+                    </button>
+                </div>
+                <input type="file" id="monkey-file-input" accept="image/*" multiple hidden>
+                <div id="monkey-preview" class="monkey-preview"></div>
+            </div>
+        </section>
+    </main>
+
+<script>
+        function easeInOutQuad(t) {
+            return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+        }
+
+        function smoothScrollTo(targetY, duration) {
+            const startY = window.scrollY || window.pageYOffset;
+            const distance = targetY - startY;
+            const startTime = performance.now();
+
+            function step(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeProgress = easeInOutQuad(progress);
+                window.scrollTo(0, startY + distance * easeProgress);
+
+                if (elapsed < duration) {
+                    window.requestAnimationFrame(step);
+                }
+            }
+
+            window.requestAnimationFrame(step);
+        }
+
+        function normalizeUrl(url) {
+            if (typeof url !== 'string') return url;
+            return url.replace(/&amp;/g, '&');
+        }
+
+        function bestInstagramResolutionUrl(url) {
+            if (typeof url !== 'string') return url;
+            const normalized = normalizeUrl(url);
+            return normalized.replace(/s\d+(?:\.\d+)?x\d+(?:\.\d+)?/g, 's1080x1080');
+        }
+
+        async function resolveInstagramImageUrl(postUrl) {
+            try {
+                const oembedUrl = `https://api.instagram.com/oembed?url=${encodeURIComponent(postUrl)}`;
+                const res = await fetch(oembedUrl);
+                if (res.ok) {
+                    const json = await res.json();
+                    if (json.thumbnail_url) {
+                        return bestInstagramResolutionUrl(json.thumbnail_url);
+                    }
+                }
+            } catch (err) {
+                console.warn('Instagram oEmbed falhou', err);
+            }
+
+            try {
+                const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(postUrl);
+                const res = await fetch(proxyUrl);
+                if (!res.ok) throw new Error('Falha ao buscar página do Instagram');
+                const html = await res.text();
+                const match = html.match(/<meta property="og:image" content="([^"]+)"/i);
+                return match ? bestInstagramResolutionUrl(match[1]) : null;
+            } catch (err) {
+                console.warn('Não foi possível resolver imagem Instagram para', postUrl, err);
+                return null;
+            }
+        }
+
+        function setImageSourceWithFallback(img, primarySrc, fallbackSrc) {
+            let triedFallback = false;
+            img.src = primarySrc;
+            img.onerror = () => {
+                if (!triedFallback && fallbackSrc && fallbackSrc !== primarySrc) {
+                    triedFallback = true;
+                    img.src = fallbackSrc;
+                    return;
+                }
+
+                const fallbackMessage = document.createElement('p');
+                fallbackMessage.textContent = 'Não foi possível carregar a imagem.';
+                fallbackMessage.style.color = '#ffffff';
+                fallbackMessage.style.marginBottom = '10px';
+                img.replaceWith(fallbackMessage);
+            };
+        }
+
+        async function loadInsta() {
+            try {
+                const res = await fetch('insta.json');
+                if (!res.ok) return console.warn('Não foi possível carregar insta.json');
+                const data = await res.json();
+                const galeria = document.getElementById('meu-album');
+                if (!Array.isArray(data) || data.length === 0) return;
+
+                for (const item of data) {
+                    const section = document.createElement('section');
+                    section.className = 'obra';
+
+                    const moldura = document.createElement('div');
+                    moldura.className = 'moldura';
+
+                    const originalImageUrl = normalizeUrl(item.image_url || item.media_url || item.url || item);
+                    const fallbackImageUrl = originalImageUrl;
+                    const isInstagramPost = typeof originalImageUrl === 'string' && originalImageUrl.includes('instagram.com/') && originalImageUrl.includes('/p/');
+                    let resolvedUrl = originalImageUrl;
+                    if (isInstagramPost) {
+                        const remoteUrl = await resolveInstagramImageUrl(originalImageUrl);
+                        resolvedUrl = remoteUrl ? bestInstagramResolutionUrl(remoteUrl) : originalImageUrl;
+                    }
+
+                    if (resolvedUrl && /^https?:\/\//i.test(resolvedUrl)) {
+                        const img = document.createElement('img');
+                        img.alt = item.caption || 'Imagem do Instagram';
+                        img.loading = 'lazy';
+                        setImageSourceWithFallback(img, resolvedUrl, fallbackImageUrl);
+                        moldura.appendChild(img);
+                    } else {
+                        const message = document.createElement('p');
+                        message.textContent = 'Não foi possível resolver a imagem automaticamente.';
+                        message.style.color = '#ffffff';
+                        message.style.marginBottom = '10px';
+                        moldura.appendChild(message);
+
+                        const link = document.createElement('a');
+                        link.href = originalImageUrl;
+                        link.target = '_blank';
+                        link.rel = 'noopener noreferrer';
+                        link.textContent = 'Ver publicação no Instagram';
+                        link.style.color = '#ffffff';
+                        link.style.textDecoration = 'underline';
+                        moldura.appendChild(link);
+                    }
+
+                    const legenda = document.createElement('div');
+                    legenda.className = 'legenda';
+
+                    const h3 = document.createElement('h3');
+                    h3.textContent = item.title || item.timestamp || item.caption || '';
+
+                    const p = document.createElement('p');
+                    p.className = 'descricao';
+                    p.textContent = item.caption || '';
+
+                    legenda.appendChild(h3);
+                    legenda.appendChild(p);
+
+                    section.appendChild(moldura);
+                    section.appendChild(legenda);
+
+                    galeria.appendChild(section);
+                }
+            } catch (err) {
+                console.error('Erro ao carregar feed do Instagram:', err);
+            }
+        }
+
+        function scrollToGallery() {
+            const instrucao = document.getElementById('texto-instrucao');
+            instrucao.style.opacity = '0';
+            const duration = 1200;
+            document.body.style.overflowY = 'auto';
+            const target = document.querySelector('.obra.made-by');
+            const targetY = target ? target.offsetTop : window.innerHeight;
+            smoothScrollTo(targetY, duration);
+        }
+
+        function setupMonkeyPhotoButton() {
+            const buttons = Array.from(document.querySelectorAll('.monkey-button'));
+            const fileInput = document.getElementById('monkey-file-input');
+            const preview = document.getElementById('monkey-preview');
+
+            if (!buttons.length || !fileInput || !preview) return;
+
+            buttons.forEach((button) => {
+                button.addEventListener('click', () => fileInput.click());
+            });
+
+            fileInput.addEventListener('change', (event) => {
+                const files = Array.from(event.target.files || []);
+                files.forEach((file) => {
+                    if (!file.type.startsWith('image/')) return;
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const thumb = document.createElement('img');
+                        thumb.src = reader.result;
+                        thumb.alt = 'Foto adicionada';
+                        thumb.className = 'monkey-thumb';
+                        preview.appendChild(thumb);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+        }
+
+        function setupReverseScroll() {
+            const monkeySlide = document.getElementById('monkey-slide');
+            const madeBySlide = document.querySelector('.obra.made-by');
+            const headerSlide = document.querySelector('.cabecalho');
+
+            if (monkeySlide) {
+                monkeySlide.addEventListener('wheel', (event) => {
+                    if (event.deltaY < 0) {
+                        event.preventDefault();
+                        if (!madeBySlide) return;
+                        smoothScrollTo(madeBySlide.offsetTop, 900);
+                    }
+                }, { passive: false });
+            }
+
+            if (madeBySlide) {
+                madeBySlide.addEventListener('wheel', (event) => {
+                    if (event.deltaY < 0) {
+                        event.preventDefault();
+                        if (!headerSlide) return;
+                        smoothScrollTo(headerSlide.offsetTop, 900);
+                    } else if (event.deltaY > 0) {
+                        event.preventDefault();
+                        if (!monkeySlide) return;
+                        smoothScrollTo(monkeySlide.offsetTop, 900);
+                    }
+                }, { passive: false });
+            }
+        }
+
+        document.addEventListener('keydown', function(evento) {
+            if (evento.key === 'Enter') {
+                evento.preventDefault();
+                scrollToGallery();
+            }
+        });
+
+        setupMonkeyPhotoButton();
+        setupReverseScroll();
+    </script>
+</body>
+</html>
