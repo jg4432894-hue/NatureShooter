@@ -124,6 +124,38 @@
             });
         }
 
+        function setupReverseScroll() {
+            const headerSlide = document.querySelector('.cabecalho');
+            const madeBySlide = document.querySelector('.obra.made-by');
+            const monkeySlide = document.getElementById('monkey-slide');
+
+            function scrollToSlide(element) {
+                if (!element) return;
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            if (madeBySlide) {
+                madeBySlide.addEventListener('wheel', (event) => {
+                    if (event.deltaY < 0) {
+                        event.preventDefault();
+                        scrollToSlide(headerSlide);
+                    } else if (event.deltaY > 0) {
+                        event.preventDefault();
+                        scrollToSlide(monkeySlide);
+                    }
+                }, { passive: false });
+            }
+
+            if (monkeySlide) {
+                monkeySlide.addEventListener('wheel', (event) => {
+                    if (event.deltaY < 0) {
+                        event.preventDefault();
+                        scrollToSlide(madeBySlide);
+                    }
+                }, { passive: false });
+            }
+        }
+
         document.addEventListener('keydown', function(evento) {
             if (evento.key === 'Enter') {
                 evento.preventDefault();
@@ -133,6 +165,7 @@
 
         setupMonkeyPhotoButton();
         setupSidebarMenu();
+        setupReverseScroll();
 
         function setupSidebarMenu() {
             const sidebar = document.querySelector('.sidebar');
