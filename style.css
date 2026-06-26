@@ -8,6 +8,11 @@ html {
     padding: 0;
 }
 
+html, body {
+    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory;
+}
+
 body {
     background-color: #121212;
     color: #eeeeee;
@@ -15,7 +20,6 @@ body {
     overflow-y: auto;
     height: 100vh;
     min-height: 100vh;
-    scroll-snap-type: y mandatory;
     padding-top: 10px;
 }
 
@@ -148,6 +152,7 @@ img {
     align-items: center;
     text-align: center;
     scroll-snap-align: start;
+    scroll-snap-stop: always;
     background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)), url('fotos/d90d2b4d-739e-4e83-9ef0-656e6b3c6dd5.jpg');
     background-size: cover;
     background-position: center;
@@ -238,6 +243,8 @@ img {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
     justify-content: center;
     align-items: center;
     scroll-snap-align: start;
@@ -542,7 +549,7 @@ img {
         width: 100%;
         overflow-x: hidden;
         height: auto;
-        scroll-snap-type: none;
+        scroll-snap-type: y mandatory;
     }
 
     .cabecalho,
