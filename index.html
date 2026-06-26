@@ -22,10 +22,17 @@
 <body>
 
     <nav class="sidebar" aria-label="Navegação principal">
-        <ul>
-            <li><a href="#inicio-slide">Início</a></li>
-            <li><a href="#monkey-slide">Fotos</a></li>
-        </ul>
+        <button class="menu-toggle" aria-expanded="false" aria-controls="sidebar-menu" aria-label="Abrir menu de navegação">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="sidebar-menu" id="sidebar-menu" aria-hidden="true">
+            <ul>
+                <li><a href="#inicio-slide">Início</a></li>
+                <li><a href="#monkey-slide">Fotos</a></li>
+            </ul>
+        </div>
     </nav>
 
     <header class="cabecalho" id="inicio-slide">
@@ -300,7 +307,47 @@
         });
 
         setupMonkeyPhotoButton();
+        setupSidebarMenu();
         setupReverseScroll();
+
+        function setupSidebarMenu() {
+            const sidebar = document.querySelector('.sidebar');
+            const menuToggle = sidebar ? sidebar.querySelector('.menu-toggle') : null;
+            const sidebarMenu = sidebar ? sidebar.querySelector('.sidebar-menu') : null;
+            const menuLinks = sidebarMenu ? Array.from(sidebarMenu.querySelectorAll('a')) : [];
+
+            if (!menuToggle || !sidebarMenu) return;
+
+            function toggleMenu(open) {
+                const isOpen = typeof open === 'boolean' ? open : !sidebar.classList.contains('sidebar-open');
+                sidebar.classList.toggle('sidebar-open', isOpen);
+                menuToggle.setAttribute('aria-expanded', String(isOpen));
+                sidebarMenu.setAttribute('aria-hidden', String(!isOpen));
+            }
+
+            menuToggle.addEventListener('click', (event) => {
+                event.stopPropagation();
+                toggleMenu();
+            });
+
+            document.addEventListener('click', (event) => {
+                if (!sidebar.contains(event.target) && sidebar.classList.contains('sidebar-open')) {
+                    toggleMenu(false);
+                }
+            });
+
+            menuLinks.forEach((link) => {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const targetId = link.getAttribute('href');
+                    const target = document.querySelector(targetId);
+                    if (target) {
+                        toggleMenu(false);
+                        smoothScrollTo(target.offsetTop, 900);
+                    }
+                });
+            });
+        }
     </script>
 </body>
 </html>
