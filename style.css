@@ -13,7 +13,9 @@ body {
     color: #eeeeee;
     font-family: 'Helvetica Neue', Arial, sans-serif;
     overflow-y: auto;
+    height: 100vh;
     min-height: 100vh;
+    scroll-snap-type: y mandatory;
     padding-top: 10px;
 }
 
@@ -287,13 +289,11 @@ img {
 }
 
 .monkey-button-wrapper {
-    margin: 80px auto 0;
-    display: flex;
-    flex-wrap: wrap;
+    margin: 120px auto 0;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 20px;
-    width: min(100%, 1080px);
 }
 
 #add-new-btn {
@@ -323,8 +323,8 @@ img {
 
 
 .monkey-button {
-    width: clamp(240px, 30vw, 400px);
-    height: clamp(240px, 30vw, 400px);
+    width: 400px;
+    height: 400px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
