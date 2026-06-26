@@ -269,7 +269,6 @@ img {
     display: block;
 }
 
-.obra.made-by,
 .monkey-slide {
     min-height: 100vh;
     width: 100%;
@@ -304,13 +303,9 @@ img {
     margin-left: 300px;
 }
 
-.made-by-texto,
 .monkey-card {
     text-align: center;
     color: #ffffff;
-}
-
-.monkey-card {
     width: auto;
     max-width: none;
     background: transparent;
@@ -473,14 +468,6 @@ img {
     .moldura img {
         max-height: 70vh;
     }
-
-    .made-by-label {
-        font-size: 1.8rem;
-    }
-
-    .made-by-name {
-        font-size: 3rem;
-    }
 }
 
 @media (max-width: 768px) {
@@ -512,14 +499,6 @@ img {
     .monkey-button img {
         width: 100%;
         height: 100%;
-    }
-
-    .made-by-label {
-        font-size: 1.5rem;
-    }
-
-    .made-by-name {
-        font-size: 2.6rem;
     }
 
     .obra,
@@ -555,10 +534,6 @@ img {
 
     .moldura img {
         max-height: 55vh;
-    }
-
-    .made-by-name {
-        font-size: 2.2rem;
     }
 }
 

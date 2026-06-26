@@ -55,13 +55,6 @@
     </header>
 
     <main class="galeria" id="meu-album">
-        <section class="obra made-by">
-            <div class="made-by-texto">
-                <p class="made-by-label">Made by</p>
-                <h2 class="made-by-name">Miguel Figueiredo</h2>
-            </div>
-        </section>
-
         <section class="obra monkey-slide" id="monkey-slide">
             <div class="monkey-card">
                 <div class="monkey-button-wrapper">
@@ -92,7 +85,7 @@
             if (instrucao) {
                 instrucao.style.opacity = '0';
             }
-            const target = document.querySelector('.obra.made-by');
+            const target = document.getElementById('monkey-slide');
             scrollToElement(target || document.body);
         }
 
@@ -126,7 +119,6 @@
 
         function setupReverseScroll() {
             const headerSlide = document.querySelector('.cabecalho');
-            const madeBySlide = document.querySelector('.obra.made-by');
             const monkeySlide = document.getElementById('monkey-slide');
 
             function scrollToSlide(element) {
@@ -134,12 +126,9 @@
                 element.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
 
-            if (madeBySlide) {
-                madeBySlide.addEventListener('wheel', (event) => {
-                    if (event.deltaY < 0) {
-                        event.preventDefault();
-                        scrollToSlide(headerSlide);
-                    } else if (event.deltaY > 0) {
+            if (headerSlide) {
+                headerSlide.addEventListener('wheel', (event) => {
+                    if (event.deltaY > 0) {
                         event.preventDefault();
                         scrollToSlide(monkeySlide);
                     }
@@ -150,7 +139,7 @@
                 monkeySlide.addEventListener('wheel', (event) => {
                     if (event.deltaY < 0) {
                         event.preventDefault();
-                        scrollToSlide(madeBySlide);
+                        scrollToSlide(headerSlide);
                     }
                 }, { passive: false });
             }
