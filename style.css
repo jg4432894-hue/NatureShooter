@@ -12,15 +12,10 @@ body {
     background-color: #121212;
     color: #eeeeee;
     font-family: 'Helvetica Neue', Arial, sans-serif;
+    scroll-snap-type: y mandatory;
     overflow-y: auto;
     min-height: 100vh;
     padding-top: 10px;
-}
-
-img {
-    display: block;
-    max-width: 100%;
-    height: auto;
 }
 
 .sidebar {
@@ -73,7 +68,7 @@ img {
     position: fixed;
     top: 0;
     right: 0;
-    width: min(90vw, 260px);
+    width: 260px;
     min-height: 100vh;
     padding: 80px 24px 24px 24px;
     background: rgba(0, 0, 0, 0.52);
@@ -287,13 +282,11 @@ img {
 }
 
 .monkey-button-wrapper {
-    margin: 80px auto 0;
-    display: flex;
-    flex-wrap: wrap;
+    margin: 120px auto 0;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 20px;
-    width: min(100%, 1080px);
 }
 
 #add-new-btn {
@@ -321,10 +314,15 @@ img {
 }
 
 
+.monkey-button-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
 
 .monkey-button {
-    width: clamp(240px, 30vw, 400px);
-    height: clamp(240px, 30vw, 400px);
+    width: 400px;
+    height: 400px;
     display: inline-flex;
     align-items: center;
     justify-content: center;

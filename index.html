@@ -82,18 +82,163 @@
     </main>
 
 <script>
-        function scrollToElement(target) {
-            if (!target) return;
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        function easeInOutQuad(t) {
+            return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+        }
+
+        function smoothScrollTo(targetY, duration) {
+            const startY = window.scrollY || window.pageYOffset;
+            const distance = targetY - startY;
+            const startTime = performance.now();
+
+            function step(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeProgress = easeInOutQuad(progress);
+                window.scrollTo(0, startY + distance * easeProgress);
+
+                if (elapsed < duration) {
+                    window.requestAnimationFrame(step);
+                }
+            }
+
+            window.requestAnimationFrame(step);
+        }
+
+        function normalizeUrl(url) {
+            if (typeof url !== 'string') return url;
+            return url.replace(/&amp;/g, '&');
+        }
+
+        function bestInstagramResolutionUrl(url) {
+            if (typeof url !== 'string') return url;
+            const normalized = normalizeUrl(url);
+            return normalized.replace(/s\d+(?:\.\d+)?x\d+(?:\.\d+)?/g, 's1080x1080');
+        }
+
+        async function resolveInstagramImageUrl(postUrl) {
+            try {
+                const oembedUrl = `https://api.instagram.com/oembed?url=${encodeURIComponent(postUrl)}`;
+                const res = await fetch(oembedUrl);
+                if (res.ok) {
+                    const json = await res.json();
+                    if (json.thumbnail_url) {
+                        return bestInstagramResolutionUrl(json.thumbnail_url);
+                    }
+                }
+            } catch (err) {
+                console.warn('Instagram oEmbed falhou', err);
+            }
+
+            try {
+                const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(postUrl);
+                const res = await fetch(proxyUrl);
+                if (!res.ok) throw new Error('Falha ao buscar página do Instagram');
+                const html = await res.text();
+                const match = html.match(/<meta property="og:image" content="([^"]+)"/i);
+                return match ? bestInstagramResolutionUrl(match[1]) : null;
+            } catch (err) {
+                console.warn('Não foi possível resolver imagem Instagram para', postUrl, err);
+                return null;
+            }
+        }
+
+        function setImageSourceWithFallback(img, primarySrc, fallbackSrc) {
+            let triedFallback = false;
+            img.src = primarySrc;
+            img.onerror = () => {
+                if (!triedFallback && fallbackSrc && fallbackSrc !== primarySrc) {
+                    triedFallback = true;
+                    img.src = fallbackSrc;
+                    return;
+                }
+
+                const fallbackMessage = document.createElement('p');
+                fallbackMessage.textContent = 'Não foi possível carregar a imagem.';
+                fallbackMessage.style.color = '#ffffff';
+                fallbackMessage.style.marginBottom = '10px';
+                img.replaceWith(fallbackMessage);
+            };
+        }
+
+        async function loadInsta() {
+            try {
+                const res = await fetch('insta.json');
+                if (!res.ok) return console.warn('Não foi possível carregar insta.json');
+                const data = await res.json();
+                const galeria = document.getElementById('meu-album');
+                if (!Array.isArray(data) || data.length === 0) return;
+
+                for (const item of data) {
+                    const section = document.createElement('section');
+                    section.className = 'obra';
+
+                    const moldura = document.createElement('div');
+                    moldura.className = 'moldura';
+
+                    const originalImageUrl = normalizeUrl(item.image_url || item.media_url || item.url || item);
+                    const fallbackImageUrl = originalImageUrl;
+                    const isInstagramPost = typeof originalImageUrl === 'string' && originalImageUrl.includes('instagram.com/') && originalImageUrl.includes('/p/');
+                    let resolvedUrl = originalImageUrl;
+                    if (isInstagramPost) {
+                        const remoteUrl = await resolveInstagramImageUrl(originalImageUrl);
+                        resolvedUrl = remoteUrl ? bestInstagramResolutionUrl(remoteUrl) : originalImageUrl;
+                    }
+
+                    if (resolvedUrl && /^https?:\/\//i.test(resolvedUrl)) {
+                        const img = document.createElement('img');
+                        img.alt = item.caption || 'Imagem do Instagram';
+                        img.loading = 'lazy';
+                        setImageSourceWithFallback(img, resolvedUrl, fallbackImageUrl);
+                        moldura.appendChild(img);
+                    } else {
+                        const message = document.createElement('p');
+                        message.textContent = 'Não foi possível resolver a imagem automaticamente.';
+                        message.style.color = '#ffffff';
+                        message.style.marginBottom = '10px';
+                        moldura.appendChild(message);
+
+                        const link = document.createElement('a');
+                        link.href = originalImageUrl;
+                        link.target = '_blank';
+                        link.rel = 'noopener noreferrer';
+                        link.textContent = 'Ver publicação no Instagram';
+                        link.style.color = '#ffffff';
+                        link.style.textDecoration = 'underline';
+                        moldura.appendChild(link);
+                    }
+
+                    const legenda = document.createElement('div');
+                    legenda.className = 'legenda';
+
+                    const h3 = document.createElement('h3');
+                    h3.textContent = item.title || item.timestamp || item.caption || '';
+
+                    const p = document.createElement('p');
+                    p.className = 'descricao';
+                    p.textContent = item.caption || '';
+
+                    legenda.appendChild(h3);
+                    legenda.appendChild(p);
+
+                    section.appendChild(moldura);
+                    section.appendChild(legenda);
+
+                    galeria.appendChild(section);
+                }
+            } catch (err) {
+                console.error('Erro ao carregar feed do Instagram:', err);
+            }
         }
 
         function scrollToGallery() {
             const instrucao = document.getElementById('texto-instrucao');
-            if (instrucao) {
-                instrucao.style.opacity = '0';
-            }
+            instrucao.style.opacity = '0';
+            const duration = 1200;
+            document.body.style.overflowY = 'auto';
             const target = document.querySelector('.obra.made-by');
-            scrollToElement(target || document.body);
+            const targetY = target ? target.offsetTop : window.innerHeight;
+            smoothScrollTo(targetY, duration);
         }
 
         function setupMonkeyPhotoButton() {
@@ -124,6 +269,36 @@
             });
         }
 
+        function setupReverseScroll() {
+            const monkeySlide = document.getElementById('monkey-slide');
+            const madeBySlide = document.querySelector('.obra.made-by');
+            const headerSlide = document.querySelector('.cabecalho');
+
+            if (monkeySlide) {
+                monkeySlide.addEventListener('wheel', (event) => {
+                    if (event.deltaY < 0) {
+                        event.preventDefault();
+                        if (!madeBySlide) return;
+                        smoothScrollTo(madeBySlide.offsetTop, 900);
+                    }
+                }, { passive: false });
+            }
+
+            if (madeBySlide) {
+                madeBySlide.addEventListener('wheel', (event) => {
+                    if (event.deltaY < 0) {
+                        event.preventDefault();
+                        if (!headerSlide) return;
+                        smoothScrollTo(headerSlide.offsetTop, 900);
+                    } else if (event.deltaY > 0) {
+                        event.preventDefault();
+                        if (!monkeySlide) return;
+                        smoothScrollTo(monkeySlide.offsetTop, 900);
+                    }
+                }, { passive: false });
+            }
+        }
+
         document.addEventListener('keydown', function(evento) {
             if (evento.key === 'Enter') {
                 evento.preventDefault();
@@ -133,6 +308,7 @@
 
         setupMonkeyPhotoButton();
         setupSidebarMenu();
+        setupReverseScroll();
 
         function setupSidebarMenu() {
             const sidebar = document.querySelector('.sidebar');
@@ -167,7 +343,7 @@
                     const target = document.querySelector(targetId);
                     if (target) {
                         toggleMenu(false);
-                        scrollToElement(target);
+                        smoothScrollTo(target.offsetTop, 900);
                     }
                 });
             });
