@@ -71,13 +71,13 @@ body {
     width: 260px;
     min-height: 100vh;
     padding: 80px 24px 24px 24px;
-    background: rgba(0, 0, 0, 0.88);
-    backdrop-filter: blur(10px);
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(12px);
     box-shadow: -10px 0 40px rgba(0, 0, 0, 0.35);
     transform: translateX(110%);
     opacity: 0;
     transition: transform 0.35s ease, opacity 0.35s ease;
-    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .sidebar-open .sidebar-menu {
