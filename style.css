@@ -10,17 +10,25 @@ html {
 
 html, body {
     scroll-behavior: smooth;
-    scroll-snap-type: y mandatory;
 }
 
 body {
     background-color: #121212;
     color: #eeeeee;
     font-family: 'Helvetica Neue', Arial, sans-serif;
-    overflow-y: auto;
+    overflow: hidden;
     height: 100vh;
     min-height: 100vh;
-    padding-top: 10px;
+}
+
+.galeria {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    min-height: 100vh;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
 }
 
 img {
