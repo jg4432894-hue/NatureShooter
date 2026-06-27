@@ -73,6 +73,7 @@ def main():
             continue
 
         if item.get('image_url'):
+            item['image_url'] = item['image_url'].replace('&amp;', '&')
             print(f'[{idx}] já resolvido: {item["image_url"]}')
             continue
 
@@ -80,7 +81,7 @@ def main():
             print(f'[{idx}] resolvendo {media_url}')
             image = resolve_instagram_image(media_url)
             if image:
-                item['image_url'] = image
+                item['image_url'] = image.replace('&amp;', '&')
                 item['post_url'] = media_url
                 print(f'    -> {image}')
                 changed = True

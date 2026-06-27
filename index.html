@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>NatureShooter | Fotografia de Animais</title>
     <meta name="description" content="NatureShooter é o portfólio de fotografia de animais e natureza por Miguel Figueiredo. Explore imagens de macacos, girafas e paisagens naturais." />
     <meta name="keywords" content="NatureShooter, fotografia, animais, natureza, macacos, girafas, portfólio, Miguel Figueiredo" />
@@ -30,7 +30,7 @@
         <div class="sidebar-menu" id="sidebar-menu" aria-hidden="true">
             <ul>
                 <li><a href="#inicio-slide">Início</a></li>
-                <li><a href="#monkey-slide">Fotos</a></li>
+                <li><a href="#photos-slide">Fotos</a></li>
             </ul>
         </div>
     </nav>
@@ -39,12 +39,12 @@
         <header class="cabecalho" id="inicio-slide">
             <h1>NatureShooter</h1>
             <p>A beleza da natureza e dos animais através da minha lente.</p>
-            
+
             <div class="perfil-container">
-                <img src="fotos/pfp.jpg" alt="Foto de Perfil Nature Shooter" class="perfil-foto">
-                
-                <a href="https://www.instagram.com/nature_shooter1/" target="_blank" class="instagram-link" title="Visitar Instagram">
-                    <svg class="instagram-logo" viewBox="0 0 512 512">
+                <img src="fotos/pfp.jpg" alt="Foto de perfil NatureShooter" class="perfil-foto">
+
+                <a href="https://www.instagram.com/nature_shooter1/" target="_blank" rel="noopener" class="instagram-link" title="Visitar Instagram">
+                    <svg class="instagram-logo" viewBox="0 0 512 512" aria-hidden="true">
                         <path d="M349.33 69.33a93.62 93.62 0 0 1 93.34 93.34v186.66a93.62 93.62 0 0 1-93.34 93.34H162.67a93.62 93.62 0 0 1-93.34-93.34V162.67a93.62 93.62 0 0 1 93.34-93.34h186.66m0-37.33H162.67C90.8 32 32 90.8 32 162.67v186.66C32 421.2 90.8 480 162.67 480h186.66C421.2 480 480 421.2 480 349.33V162.67C480 90.8 421.2 32 349.33 32z"/>
                         <path d="M256 138.67A117.33 117.33 0 1 0 373.33 256 117.46 117.46 0 0 0 256 138.67zm0 197.33A80 80 0 1 1 336 256a80.09 80.09 0 0 1-80 80z"/>
                         <circle cx="390.47" cy="121.53" r="27.02"/>
@@ -55,145 +55,37 @@
             <p class="instrucao" id="texto-instrucao">Pressione Enter para ver mais</p>
         </header>
 
-        <section class="obra monkey-slide" id="monkey-slide">
-            <div class="monkey-card">
-                <div class="monkey-button-wrapper">
-                    <button id="add-monkey-btn" class="monkey-button" type="button" aria-label="Adicionar fotos de macacos">
-                        <img src="fotos/IMG_3420.JPG" alt="Macaco" />
+        <section class="obra photos-slide" id="photos-slide">
+            <div class="gallery-container">
+                <div class="photo-button-wrapper">
+                    <button type="button" class="photo-button" aria-label="Ver foto: Macaco">
+                        <img src="fotos/IMG_3420.JPG" alt="Macaco">
                     </button>
-                    <button id="add-new-btn" class="monkey-button" type="button" aria-label="Adicionar fotos adicionais">
-                        <img src="fotos/IMG_3447.JPG" alt="Girafa" />
+                    <button type="button" class="photo-button photo-button--offset-1" aria-label="Ver foto: Girafa">
+                        <img src="fotos/IMG_3447.JPG" alt="Girafa">
                     </button>
-                    <button id="add-new-btn-2" class="monkey-button" type="button" aria-label="Adicionar foto recém adicionada">
-                        <img src="fotos/IMG_3460.JPG" alt="Imagem nova" />
+                    <button type="button" class="photo-button photo-button--offset-2" aria-label="Ver foto: Natureza">
+                        <img src="fotos/IMG_3460.JPG" alt="Natureza">
                     </button>
                 </div>
-                <input type="file" id="monkey-file-input" accept="image/*" multiple hidden>
-                <div id="monkey-preview" class="monkey-preview"></div>
+
+                <h2 class="gallery-title">Galeria</h2>
+                <div id="gallery-grid" class="gallery-grid" aria-live="polite"></div>
             </div>
         </section>
     </main>
 
-<script>
-        function scrollToElement(target) {
-            if (!target) return;
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+    <div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-label="Visualização de foto">
+        <button class="lightbox-close" type="button" aria-label="Fechar">&times;</button>
+        <button class="lightbox-prev" type="button" aria-label="Foto anterior">&#8249;</button>
+        <button class="lightbox-next" type="button" aria-label="Próxima foto">&#8250;</button>
+        <div class="lightbox-content">
+            <img id="lightbox-img" src="" alt="">
+            <p id="lightbox-caption" class="lightbox-caption" hidden></p>
+            <a id="lightbox-instagram" href="#" target="_blank" rel="noopener" class="lightbox-instagram-link">Ver no Instagram</a>
+        </div>
+    </div>
 
-        function scrollToGallery() {
-            const instrucao = document.getElementById('texto-instrucao');
-            if (instrucao) {
-                instrucao.style.opacity = '0';
-            }
-            const target = document.getElementById('monkey-slide');
-            scrollToElement(target || document.body);
-        }
-
-        function setupMonkeyPhotoButton() {
-            const buttons = Array.from(document.querySelectorAll('.monkey-button'));
-            const fileInput = document.getElementById('monkey-file-input');
-            const preview = document.getElementById('monkey-preview');
-
-            if (!buttons.length || !fileInput || !preview) return;
-
-            buttons.forEach((button) => {
-                button.addEventListener('click', () => fileInput.click());
-            });
-
-            fileInput.addEventListener('change', (event) => {
-                const files = Array.from(event.target.files || []);
-                files.forEach((file) => {
-                    if (!file.type.startsWith('image/')) return;
-                    const reader = new FileReader();
-                    reader.onload = () => {
-                        const thumb = document.createElement('img');
-                        thumb.src = reader.result;
-                        thumb.alt = 'Foto adicionada';
-                        thumb.className = 'monkey-thumb';
-                        preview.appendChild(thumb);
-                    };
-                    reader.readAsDataURL(file);
-                });
-            });
-        }
-
-        function setupReverseScroll() {
-            const headerSlide = document.querySelector('.cabecalho');
-            const monkeySlide = document.getElementById('monkey-slide');
-
-            function scrollToSlide(element) {
-                if (!element) return;
-                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-
-            if (headerSlide) {
-                headerSlide.addEventListener('wheel', (event) => {
-                    if (event.deltaY > 0) {
-                        event.preventDefault();
-                        scrollToSlide(monkeySlide);
-                    }
-                }, { passive: false });
-            }
-
-            if (monkeySlide) {
-                monkeySlide.addEventListener('wheel', (event) => {
-                    if (event.deltaY < 0) {
-                        event.preventDefault();
-                        scrollToSlide(headerSlide);
-                    }
-                }, { passive: false });
-            }
-        }
-
-        document.addEventListener('keydown', function(evento) {
-            if (evento.key === 'Enter') {
-                evento.preventDefault();
-                scrollToGallery();
-            }
-        });
-
-        setupMonkeyPhotoButton();
-        setupSidebarMenu();
-        setupReverseScroll();
-
-        function setupSidebarMenu() {
-            const sidebar = document.querySelector('.sidebar');
-            const menuToggle = sidebar ? sidebar.querySelector('.menu-toggle') : null;
-            const sidebarMenu = sidebar ? sidebar.querySelector('.sidebar-menu') : null;
-            const menuLinks = sidebarMenu ? Array.from(sidebarMenu.querySelectorAll('a')) : [];
-
-            if (!menuToggle || !sidebarMenu) return;
-
-            function toggleMenu(open) {
-                const isOpen = typeof open === 'boolean' ? open : !sidebar.classList.contains('sidebar-open');
-                sidebar.classList.toggle('sidebar-open', isOpen);
-                menuToggle.setAttribute('aria-expanded', String(isOpen));
-                sidebarMenu.setAttribute('aria-hidden', String(!isOpen));
-            }
-
-            menuToggle.addEventListener('click', (event) => {
-                event.stopPropagation();
-                toggleMenu();
-            });
-
-            document.addEventListener('click', (event) => {
-                if (!sidebar.contains(event.target) && sidebar.classList.contains('sidebar-open')) {
-                    toggleMenu(false);
-                }
-            });
-
-            menuLinks.forEach((link) => {
-                link.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    const targetId = link.getAttribute('href');
-                    const target = document.querySelector(targetId);
-                    if (target) {
-                        toggleMenu(false);
-                        scrollToElement(target);
-                    }
-                });
-            });
-        }
-    </script>
+    <script src="main.js"></script>
 </body>
 </html>
